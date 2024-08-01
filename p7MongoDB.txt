@@ -1,0 +1,32 @@
+//7th qn mongo db
+
+use student
+db.createCollection("employee")
+
+//to insert
+
+db.employee.insertOne({name:"raj",age:30,email:"ex@gmail.com"})
+db.employee.insertMany([{name:"prateek",age:25,email:"res@gmail.com"},{name:"prem",age:24,email:"qe@gmail.com"},{name:"ram",age:21,email:"a@gmail.com"}]);
+
+//to retrieve
+
+db.employee.find();
+db.employee.findOne({name:"ram"});
+db.employee.find({$or:[{name:"ram"},{name:"raj"}]});
+
+//to update
+
+db.employee.updateOne({name:"raj"},{$set:{age:26}});
+db.employee.find();
+db.employee.updateMany(
+    {age:{$gte:25}},
+    {$set:{email:"older@gmail.com"}}
+);
+db.employee.find();
+
+//to delete
+
+db.employee.deleteOne({name:"ram"});
+db.employee.find();
+db.deleteMany({age:{$lte:21}});
+db.employee.find();

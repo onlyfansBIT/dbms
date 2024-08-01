@@ -1,0 +1,54 @@
+CREATE TABLE o_rollcall(
+    id NUMBER PRIMARY KEY,
+    name VARCHAR(20)
+);
+
+CREATE TABLE n_rollcall(
+    id NUMBER PRIMARY KEY,
+    name VARCHAR(10)
+);
+
+INSERT INTO o_rollcall (id, name) VALUES (1, 'John');
+INSERT INTO o_rollcall (id, name) VALUES (2, 'Alice');
+INSERT INTO o_rollcall (id, name) VALUES (3, 'Bob');
+INSERT INTO o_rollcall (id, name) VALUES (4, 'Eve');
+
+INSERT INTO n_rollcall (id, name) VALUES (1, 'John');
+INSERT INTO n_rollcall (id, name) VALUES (12, 'Alice');
+INSERT INTO n_rollcall (id, name) VALUES (13, 'Bob');
+INSERT INTO n_rollcall (id, name) VALUES (41, 'Jack');
+
+select * from n_rollcall;
+select * from o_rollcall;
+
+SET SERVEROUTPUT ON;
+
+DECLARE
+    v_id n_rollcall.id%TYPE;
+    v_name n_rollcall.name%TYPE;
+    v_count NUMBER;
+    
+    CURSOR c_rollcall IS
+        SELECT id, name FROM n_rollcall;
+BEGIN
+    FOR rec IN c_rollcall LOOP
+        SELECT COUNT(*) INTO v_count
+        FROM o_rollcall
+        WHERE id = rec.id;
+        
+        IF v_count = 0 THEN
+            INSERT INTO o_rollcall (id, name)
+            VALUES (rec.id, rec.name);
+            DBMS_OUTPUT.PUT_LINE ('Inserted ' || rec.id || ', ' || rec.name);
+        ELSE
+            DBMS_OUTPUT.PUT_LINE ('Skipped existing record: ' || rec.id || ', ' || rec.name);
+        END IF;
+    END LOOP;
+    COMMIT;
+    
+    
+END;
+
+/
+select * from o_rollcall;
+select * from n_rollcall;
